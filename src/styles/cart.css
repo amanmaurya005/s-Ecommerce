@@ -1,0 +1,143 @@
+/* --- Cart Page Layout --- */
+.left {
+  width: 70%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.right {
+  width: 30%;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-left: 2px solid #eee;
+}
+
+/* --- Cart Item --- */
+.cartItem {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.cartItem:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Product Image --- */
+.cartItem .img {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #f2f2f2;
+}
+
+.cartItem .img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.cartItem:hover .img img {
+  transform: scale(1.1);
+}
+
+/* --- Content --- */
+.cartItem .content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.cartItem .content h3 {
+  font-size: 1.2rem;
+  color: #222;
+  margin: 0;
+  font-weight: 600;
+}
+
+.cartItem .content p {
+  font-size: 1rem;
+  color: #555;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* --- Layout Wrapper --- */
+body {
+  font-family: "Poppins", sans-serif;
+  background: #fafafa;
+  margin: 0;
+  padding: 0;
+}
+
+.cartPage {
+  display: flex;
+  min-height: 100vh;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #555;
+}
+
+.empty-cart h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.empty-cart p {
+  font-size: 1rem;
+  color: #777;
+}
+.delete{
+  cursor: pointer;
+  border: solid 1px ;
+  border-radius: 20px;
+  padding: 4px;
+  display: flex;
+  font-size: 20px;
+  color: blue;
+}
+
+
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .cartPage {
+    flex-direction: column;
+  }
+
+  .left,
+  .right {
+    width: 100%;
+  }
+
+  .cartItem {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cartItem .img {
+    width: 100%;
+    height: 200px;
+  }
+
+  .cartItem .content {
+    text-align: left;
+    width: 100%;
+  }
+}
