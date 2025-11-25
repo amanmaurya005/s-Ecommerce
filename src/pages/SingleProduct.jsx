@@ -5,7 +5,7 @@ import { useCart } from "../contexts/CartProvider";
 
 function SingleProduct() {
   const { id } = useParams();
-  const { cart, setCart } = useCart();
+  const { cart, setCart, updateCartInDB } = useCart();   // <-- Firestore function use किया
   const [singleProduct, setSingleProduct] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -39,8 +39,8 @@ function SingleProduct() {
     }
   }
 
-  // Add product only once
-  function handleAddToCart() {
+  // Add product only once + Firestore Sync
+  async function handleAddToCart() {
     const alreadyExists = cart.find((item) => item.id === singleProduct._id);
 
     if (alreadyExists) {
@@ -56,7 +56,12 @@ function SingleProduct() {
       quantity: 1,
     };
 
+    // ⬅ UI Cart Update
     setCart([...cart, newItem]);
+
+    // ⬅ Firestore Add
+    await updateCartInDB(newItem);
+
     alert("Product added to cart!");
   }
 

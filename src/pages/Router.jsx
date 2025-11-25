@@ -12,6 +12,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import CartProvider from "../contexts/CartProvider";
 import AuthProvider from "../contexts/AuthProvider";
 
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -49,6 +50,7 @@ const router = createBrowserRouter([
         path: "/product/:id",
         element: <SingleProduct />,
       },
+
       {
         path: "/home",
         element: (

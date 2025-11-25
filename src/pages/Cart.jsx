@@ -1,32 +1,39 @@
 import { useCart } from "../contexts/CartProvider";
-import {MdDelete} from "react-icons/md"
+import { MdDelete } from "react-icons/md";
 
 export default function Cart() {
-  const { cart, setCart } = useCart();
+  const { cart, setCart, updateCartInDB, removeFromDB } = useCart();
 
   // Increase Quantity
   function increase(id) {
-    setCart(
-      cart.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
+    const updated = cart.map((item) =>
+      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
     );
+
+    const changedItem = updated.find((i) => i.id === id);
+
+    setCart(updated);
+    updateCartInDB(changedItem); // ⬅ Firestore Update
   }
 
   // Decrease Quantity
   function decrease(id) {
-    setCart(
-      cart.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
+    const updated = cart.map((item) =>
+      item.id === id && item.quantity > 1
+        ? { ...item, quantity: item.quantity - 1 }
+        : item
     );
+
+    const changedItem = updated.find((i) => i.id === id);
+
+    setCart(updated);
+    updateCartInDB(changedItem); // ⬅ Firestore Update
   }
 
   // Remove Item
   function remove(id) {
     setCart(cart.filter((item) => item.id !== id));
+    removeFromDB(id); // ⬅ Firestore Remove
   }
 
   // Total amount
