@@ -1,95 +1,76 @@
 import { useState } from "react";
-import { db, storage } from "../pages/Firebase";
+import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import './styles/AddProduct.css';
 
 function AddProduct() {
-  const [product, setProduct] = useState({
-    name: "",
-    price: "",
-    image: null,
-  });
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [image, setImage] = useState("");
+  const [desc, setDesc] = useState("");
 
-  const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState("");
-
-  function handleChange(e) {
-    setProduct({ ...product, [e.target.name]: e.target.value });
-  }
-
-  function handleFile(e) {
-    setProduct({ ...product, image: e.target.files[0] });
-  }
-
-  async function handleSubmit(e) {
+  async function handleAddProduct(e) {
     e.preventDefault();
-    setLoading(true);
-    setMsg("");
 
     try {
-      // Step 1: Upload Image to Firebase Storage
-      const imageRef = ref(storage, `products/${product.image.name}`);
-      await uploadBytes(imageRef, product.image);
-
-      const imageURL = await getDownloadURL(imageRef);
-
-      // Step 2: Add Product Data to Firestore
       await addDoc(collection(db, "products"), {
-        name: product.name,
-        price: Number(product.price),
-        image: imageURL,
-        createdAt: new Date(),
+        name,
+        price: Number(price),
+        image,
+        description: desc,
+        createdAt: new Date()
       });
 
-      setMsg("Product added successfully!");
-      setProduct({ name: "", price: "", image: null });
+      alert("Product Added Successfully!");
 
-    } catch (err) {
-      console.log(err);
-      setMsg("Error adding product.");
+      // Clear form
+      setName("");
+      setPrice("");
+      setImage("");
+      setDesc("");
+    } catch (error) {
+      console.log("Error adding product:", error);
+      alert("Error adding product");
     }
-
-    setLoading(false);
   }
 
   return (
-    <div className="form-container">
-      <h2>Add Product</h2>
-      {msg && <p>{msg}</p>}
+    <div style={{ maxWidth: "500px", margin: "40px auto" }}>
+      <h2>Add New Product</h2>
 
-      <form onSubmit={handleSubmit} className="form-wrapper">
-        <div className="form-group">
-          <label>Product Name</label>
-          <input
-            type="text"
-            name="name"
-            value={product.name}
-            onChange={handleChange}
-            placeholder="Enter Product Name"
-            required
-          />
-        </div>
+      <form onSubmit={handleAddProduct}>
+        <input
+          type="text"
+          placeholder="Product Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
 
-        <div className="form-group">
-          <label>Price</label>
-          <input
-            type="number"
-            name="price"
-            value={product.price}
-            onChange={handleChange}
-            placeholder="Enter Price"
-            required
-          />
-        </div>
+        <input
+          type="number"
+          placeholder="Price"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          required
+        />
 
-        <div className="form-group">
-          <label>Product Image</label>
-          <input type="file" onChange={handleFile} required />
-        </div>
+        <input
+          type="text"
+          placeholder="Image URL"
+          value={image}
+          onChange={(e) => setImage(e.target.value)}
+          required
+        />
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Uploading..." : "Add Product"}
-        </button>
+        <textarea
+          placeholder="Description"
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+          required
+        ></textarea>
+
+        <button type="submit">Add Product</button>
       </form>
     </div>
   );

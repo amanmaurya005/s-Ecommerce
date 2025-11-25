@@ -1,112 +1,79 @@
-import { useEffect, useState } from "react";
 import { useCart } from "../contexts/CartProvider";
-import instance from "../config/axiosConfig";
+import {MdDelete} from "react-icons/md"
 
-function Cart() {
+export default function Cart() {
   const { cart, setCart } = useCart();
-  const [cartItems, setCartItems] = useState([]);
 
-  useEffect(() => {
-    if (cart.length > 0) {
-      getCartProducts(cart);
-    } else {
-      setCartItems([]);
-    }
-  }, [cart]);
-
-  async function getCartProducts(cart) {
-    try {
-      const promises = cart.map((item) =>
-        instance.get("/product/product/" + item._id)  // correct id
-      );
-
-      const responses = await Promise.all(promises);
-
-      const finalProducts = responses.map((res, index) => ({
-        ...res.data,
-        quantity: cart[index].quantity,
-      }));
-
-      setCartItems(finalProducts);
-    } catch (error) {
-      console.log("Cart Fetch Error:", error);
-    }
+  // Increase Quantity
+  function increase(id) {
+    setCart(
+      cart.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
   }
 
-  function quantityLess(id) {
-    const updatedItems = cartItems.map((item) =>
-      item._id === id && item.quantity > 1
-        ? { ...item, quantity: item.quantity - 1 }
-        : item
+  // Decrease Quantity
+  function decrease(id) {
+    setCart(
+      cart.map((item) =>
+        item.id === id && item.quantity > 1
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
+      )
     );
-    setCartItems(updatedItems);
-
-    // update real cart
-    const updatedCart = cart.map((item) =>
-      item._id === id && item.quantity > 1
-        ? { ...item, quantity: item.quantity - 1 }
-        : item
-    );
-    setCart(updatedCart);
   }
 
-  function quantityAdd(id) {
-    const updatedItems = cartItems.map((item) =>
-      item._id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    setCartItems(updatedItems);
-
-    const updatedCart = cart.map((item) =>
-      item._id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    setCart(updatedCart);
+  // Remove Item
+  function remove(id) {
+    setCart(cart.filter((item) => item.id !== id));
   }
 
-  function handleDelete(id) {
-    const updatedItems = cartItems.filter((item) => item._id !== id);
-    setCartItems(updatedItems);
+  // Total amount
+  const total = cart.reduce(
+    (acc, item) => acc + Number(item.price) * item.quantity,
+    0
+  );
 
-    const updatedCart = cart.filter((item) => item._id !== id);
-    setCart(updatedCart);
-    localStorage.setItem("storedCart", JSON.stringify(updatedCart));
-  }
+  if (cart.length === 0)
+    return <h2 style={{ textAlign: "center" }}>Your cart is empty</h2>;
 
   return (
-    <>
-      <div className="left">
-        {cartItems.length === 0 ? (
-          <h2>No items in cart</h2>
-        ) : (
-          cartItems.map((obj) => (
-            <div className="cartItem" key={obj._id}>
-              <div className="img">
-                <img src={obj.image} alt={obj.name} />
-              </div>
+    <section className="cartPage">
+      <h2>Your Cart</h2>
 
-              <div className="content">
-                <h3>{obj.name}</h3>
+      {cart.map((p) => (
+        <div className="cartItem" key={p.id}>
+          <img src={p.image} alt={p.name} />
 
-                <div className="quantity-controls">
-                  <button onClick={() => quantityLess(obj._id)}>-</button>
-                  <span>{obj.quantity}</span>
-                  <button onClick={() => quantityAdd(obj._id)}>+</button>
-                </div>
+          <div className="info">
+            <h3>{p.name}</h3>
+            <p>₹{p.price}</p>
 
-                <p>₹{obj.price * obj.quantity}</p>
-              </div>
-
-              <div className="delete">
-                <p onClick={() => handleDelete(obj._id)}>remove</p>
-              </div>
+            <div className="quantity">
+              <button onClick={() => decrease(p.id)}>-</button>
+              <span>{p.quantity}</span>
+              <button onClick={() => increase(p.id)}>+</button>
             </div>
-          ))
-        )}
+          </div>
+
+          <button className="deleteBtn" onClick={() => remove(p.id)}>
+            <MdDelete />
+          </button>
+        </div>
+      ))}
+
+      <div className="total">
+        <h3>Total: ₹{total}</h3>
+        <button className="checkoutBtn">Checkout</button>
       </div>
-    </>
+    </section>
   );
 }
 
-export default Cart;
+
+
+
 
 
 //   import { useEffect, useState } from "react";
