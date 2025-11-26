@@ -9,7 +9,7 @@ import Login from "./Login";
 import Register from "./Register";
 import Home from "./Home";
 import ProtectedRoute from "../components/ProtectedRoute";
-import CartProvider from "../contexts/CartProvider";
+import {CartProvider} from "../contexts/CartProvider";
 import AuthProvider from "../contexts/AuthProvider";
 
 
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
       {
         path: "/product/:id",
         element: <SingleProduct />,
-      },
+      },  
 
       {
         path: "/home",
